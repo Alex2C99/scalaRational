@@ -22,7 +22,7 @@ case class Ratio(a :Int, b :Int) {
 
     final def unary_- :Ratio = Ratio(-a,b)
 
-    final def invert :Ratio = Ratio(b, a)
+    final def invert :Ratio = Ratio(if(a > 0) b else -b, a.abs)
 
     final def +(r :Ratio) :Ratio = Ratio(this.a*r.b+r.a*this.b, this.b*r.b).norm
 
