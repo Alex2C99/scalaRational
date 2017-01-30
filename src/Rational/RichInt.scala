@@ -25,6 +25,17 @@ object RichInt {
       if (!p.isPrime) throw new IllegalArgumentException("Pvaluation possible only for prime.")
       loop(0,a.abs)
     }
+
+    final def pow(n :Int) :Int = {
+      def loop(a :Int, n: Int, acc: Int = 1) :Int = n match {
+        case 0 => acc
+        case _ if n % 2 == 0 => loop(a * a, n / 2, acc)
+        case _ => loop(a,n-1,acc*a)
+      }
+      loop(a, n)
+    }
+
+    final def pabs(p :Int) :Ratio = if(0==a) Ratio(0) else Ratio(p pow pval(p)).invert
   }
 
 }

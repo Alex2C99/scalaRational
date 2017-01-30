@@ -48,6 +48,14 @@ case class Ratio(a :Int, b :Int) {
       unfold(a, b, List()).reverse
     }
 
+    final def pow(n :Int) :Ratio = n match {
+      case 0 => Ratio(1)
+      case _ if n < 0 => this.invert.pow(-n)
+      case _ => Ratio(a pow n, b pow n).norm
+    }
+
+    final def pabs(p :Int) :Ratio = if(0==a) Ratio(0) else (Ratio(p) pow pval(p)).invert
+
 }
 
 object Ratio {

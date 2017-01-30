@@ -10,4 +10,5 @@ object Main extends App {
   println (Ratio(11,31).toChain)
   println (Ratio fromChain List(0, 2, 1, 4, 2))
 
+  println (Ratio(49*49,49*11) pabs 7)
 }
