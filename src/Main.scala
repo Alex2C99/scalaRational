@@ -7,8 +7,7 @@ object Main extends App {
 
   import Rational.RichInt._
 
-  val r = 5 + Ratio(7, 12)
-
-  println (r.toString)
+  println (Ratio(11,31).toChain)
+  println (Ratio fromChain List(0, 2, 1, 4, 2))
 
 }
