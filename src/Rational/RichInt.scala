@@ -17,9 +17,7 @@ object RichInt {
     final def *(r :Ratio) :Ratio = Ratio(a,1) * r
     final def /(r :Ratio) :Ratio = Ratio(a,1) / r
 
-    final def isPrime :Boolean = a.abs == 2 || !(for {
-      d <- 2 to Math.sqrt(a.abs).toInt + 1
-    } yield a.abs % d).contains(0)
+    final def isPrime :Boolean = a.abs == 2 || !(2 to Math.sqrt(a.abs).toInt + 1).exists(a % _ == 0)
 
     final def pval(p :Int) :Int = {
       @scala.annotation.tailrec
