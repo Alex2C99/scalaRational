@@ -22,11 +22,11 @@ object RichInt {
     final def pval(p :Int) :Int = {
       @scala.annotation.tailrec
       def loop(cnt :Int, rst :Int) :Int = if(rst % p > 0) cnt else loop(cnt+1, rst/p)
-      if (!p.isPrime) throw new IllegalArgumentException("Pvaluation possible only for prime.")
+      require(p.isPrime, "Pvaluation possible only for prime.")
       loop(0,a.abs)
     }
 
-    final def pow(n :Int) :Int = {
+    final def pow[T](n :Int) :Int = {
       def loop(a :Int, n: Int, acc: Int = 1) :Int = n match {
         case 0 => acc
         case _ if n % 2 == 0 => loop(a * a, n / 2, acc)
@@ -35,7 +35,7 @@ object RichInt {
       loop(a, n)
     }
 
-    final def pabs(p :Int) :Ratio = if(0==a) Ratio(0) else Ratio(p pow pval(p)).invert
+    final def pabs(p :Int)(implicit num: Numeric[Ratio]) :Ratio = if(0==a) num.fromInt(0) else num.fromInt(p pow pval(p)).invert
   }
 
 }

@@ -3,11 +3,11 @@ package Rational
 /**
   * Created by А.Скрипкин on 30.01.2017.
   */
-case class Ratio(a :Int, b :Int) {
+case class Ratio(a :Int, b :Int)(implicit num :Numeric[Ratio]) {
 
     import Rational.RichInt._
 
-    if (b<=0) throw new IllegalArgumentException("Denominator cannot be negative.")
+    require(b>0, "Denominator cannot be negative.")
 
     override def toString: String = if(1==b) a.toString else a.toString + "/" + b.toString
 
@@ -16,29 +16,27 @@ case class Ratio(a :Int, b :Int) {
       Ratio(a/g, b/g)
     }
 
-    def this(i :Int) = this(i,1)
-
     final def abs = Ratio(a.abs, b)
-
-    final def unary_- :Ratio = Ratio(-a,b)
 
     final def invert :Ratio = Ratio(if(a > 0) b else -b, a.abs)
 
-    final def +(r :Ratio) :Ratio = Ratio(this.a*r.b+r.a*this.b, this.b*r.b).norm
+    final def unary_- :Ratio = num.negate(this)
 
-    final def +(i :Int) :Ratio = this + Ratio(i,1)
+    final def +(r :Ratio) :Ratio = num.plus(this, r)
 
-    final def -(i :Int) :Ratio = this - Ratio(i,1)
+    final def +(i :Int) :Ratio = this + i
 
-    final def *(i :Int) :Ratio = this * Ratio(i,1)
+    final def -(i :Int) :Ratio = this - i
 
-    final def /(i :Int) :Ratio = this / Ratio(i,1)
+    final def *(i :Int) :Ratio = this * i
+
+    final def /(i :Int) :Ratio = this / i
 
     final def -(r :Ratio) :Ratio = this + -r
 
-    final def *(r :Ratio) :Ratio = Ratio(a*r.a, b*r.b).norm
+    final def *(r :Ratio) :Ratio = num.times(this,r)
 
-    final def /(r :Ratio) :Ratio = this * r.invert
+    final def /(r :Ratio) :Ratio = num.times(this,r.invert)
 
     final def pval(p :Int) :Int = a.pval(p) - b.pval(p)
 
@@ -49,21 +47,42 @@ case class Ratio(a :Int, b :Int) {
     }
 
     final def pow(n :Int) :Ratio = n match {
-      case 0 => Ratio(1)
+      case 0 => num.fromInt(1)
       case _ if n < 0 => this.invert.pow(-n)
       case _ => Ratio(a pow n, b pow n).norm
     }
 
-    final def pabs(p :Int) :Ratio = if(0==a) Ratio(0) else (Ratio(p) pow pval(p)).invert
+    final def pabs(p :Int) :Ratio = if(0==a) num.fromInt(0) else (num.fromInt(p) pow pval(p)).invert
 
 }
 
 object Ratio {
 
-  def apply(a: Int): Ratio = new Ratio(a, 1)
+    implicit object IntRatioNumeric extends Numeric[Ratio] {
 
-  final def fromChain(l :Seq[Int]) :Ratio = {
+        override def plus(x: Ratio, y: Ratio): Ratio = Ratio(x.a*y.b+y.a*x.b, x.b*y.b).norm
+
+        override def minus(x: Ratio, y: Ratio): Ratio = x + -y
+
+        override def times(x: Ratio, y: Ratio): Ratio = Ratio(x.a*y.a, x.b*y.b).norm
+
+        override def negate(x: Ratio): Ratio = Ratio(-x.a,x.b)
+
+        override def fromInt(x: Int): Ratio = Ratio(x,1)
+
+        override def toInt(x: Ratio): Int = x.a/x.b
+
+        override def toLong(x: Ratio): Long = x.a/x.b
+
+        override def toFloat(x: Ratio): Float = x.a.toFloat / x.b
+
+        override def toDouble(x: Ratio): Double = x.a.toDouble / x.b
+
+        override def compare(x: Ratio, y: Ratio): Int = (x.a * y.b) compare (y.a * x.b)
+    }
+
+  final def fromChain(l :Seq[Int])(implicit num: Numeric[Ratio]) :Ratio = {
     val lr = l.reverse
-    (lr.tail foldLeft Ratio(lr.head)) { _.invert + _ }
+    (lr.tail foldLeft num.fromInt(lr.head)) { _.invert + num.fromInt(_) }
   }
 }
