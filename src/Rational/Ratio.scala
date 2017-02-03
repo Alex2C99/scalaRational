@@ -24,14 +24,6 @@ case class Ratio(a :Int, b :Int)(implicit num :Numeric[Ratio]) {
 
     final def +(r :Ratio) :Ratio = num.plus(this, r)
 
-    final def +(i :Int) :Ratio = this + i
-
-    final def -(i :Int) :Ratio = this - i
-
-    final def *(i :Int) :Ratio = this * i
-
-    final def /(i :Int) :Ratio = this / i
-
     final def -(r :Ratio) :Ratio = this + -r
 
     final def *(r :Ratio) :Ratio = num.times(this,r)
