@@ -27,6 +27,7 @@ object RichInt {
     }
 
     final def pow[T](n :Int) :Int = {
+      @scala.annotation.tailrec
       def loop(a :Int, n: Int, acc: Int = 1) :Int = n match {
         case 0 => acc
         case _ if n % 2 == 0 => loop(a * a, n / 2, acc)
@@ -35,7 +36,8 @@ object RichInt {
       loop(a, n)
     }
 
-    final def pabs(p :Int)(implicit num: Numeric[Ratio]) :Ratio = if(0==a) num.fromInt(0) else num.fromInt(p pow pval(p)).invert
+    final def pabs(p :Int)(implicit num: Numeric[Ratio]) :Ratio =
+        if(0==a) num.fromInt(0) else num.fromInt(p pow pval(p)).invert
   }
 
 }

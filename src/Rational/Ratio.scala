@@ -16,7 +16,7 @@ case class Ratio(a :Int, b :Int)(implicit num :Numeric[Ratio]) {
       Ratio(a/g, b/g)
     }
 
-    final def abs = Ratio(a.abs, b)
+    final def abs: Ratio = Ratio(a.abs, b)
 
     final def invert :Ratio = Ratio(if(a > 0) b else -b, a.abs)
 
@@ -38,6 +38,7 @@ case class Ratio(a :Int, b :Int)(implicit num :Numeric[Ratio]) {
       unfold(a, b, List()).reverse
     }
 
+    @scala.annotation.tailrec
     final def pow(n :Int) :Ratio = n match {
       case 0 => num.fromInt(1)
       case _ if n < 0 => this.invert.pow(-n)
@@ -71,10 +72,13 @@ object Ratio {
         override def toDouble(x: Ratio): Double = x.a.toDouble / x.b
 
         override def compare(x: Ratio, y: Ratio): Int = (x.a * y.b) compare (y.a * x.b)
+
+        override def parseString(str: String): Option[Ratio] = None
+
     }
 
-  final def fromChain(l :Seq[Int])(implicit num: Numeric[Ratio]) :Ratio = {
-    val lr = l.reverse
-    (lr.tail foldLeft num.fromInt(lr.head)) { _.invert + num.fromInt(_) }
-  }
+    final def fromChain(l :Seq[Int])(implicit num: Numeric[Ratio]) :Ratio = {
+        val lr = l.reverse
+        lr.tail.foldLeft(Ratio(lr.head,1))  { _.invert + num.fromInt(_) }
+    }
 }
