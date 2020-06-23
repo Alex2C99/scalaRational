@@ -34,7 +34,8 @@ case class Ratio(a :Int, b :Int)(implicit num :Numeric[Ratio]) {
 
     final def toChain :Seq[Int] = {
       @scala.annotation.tailrec
-      def unfold(a :Int, b :Int, l :List[Int]) :Seq[Int] = if (b == 0) l else unfold(b, a % b, a / b :: l)
+      def unfold(a :Int, b :Int, l :List[Int]) :Seq[Int] = 
+        if (b == 0) l else unfold(b, a % b, a / b :: l)
       unfold(a, b, List()).reverse
     }
 
@@ -53,15 +54,15 @@ object Ratio {
 
     implicit object IntRatioNumeric extends Numeric[Ratio] {
 
-        override def plus(x: Ratio, y: Ratio): Ratio = Ratio(x.a*y.b+y.a*x.b, x.b*y.b).norm
+        override def plus(x: Ratio, y: Ratio): Ratio = Ratio(x.a*y.b+y.a*x.b, x.b*y.b)(this).norm
 
         override def minus(x: Ratio, y: Ratio): Ratio = x + -y
 
-        override def times(x: Ratio, y: Ratio): Ratio = Ratio(x.a*y.a, x.b*y.b).norm
+        override def times(x: Ratio, y: Ratio): Ratio = Ratio(x.a*y.a, x.b*y.b)(this).norm
 
-        override def negate(x: Ratio): Ratio = Ratio(-x.a,x.b)
+        override def negate(x: Ratio): Ratio = Ratio(-x.a,x.b)(this)
 
-        override def fromInt(x: Int): Ratio = Ratio(x,1)
+        override def fromInt(x: Int): Ratio = Ratio(x,1)(this)
 
         override def toInt(x: Ratio): Int = x.a/x.b
 
